@@ -1,0 +1,30 @@
+[package]
+name = 'rust_bc_pos'
+version = '0.1.0'
+edition = '2021'
+[global.limits]
+json = 5242880
+
+[dependencies]
+chrono = '0.4.19'
+rust-crypto = '0.2.36'
+lazy_static = '1.4.0'
+
+[dependencies.serde_json]
+version = '1.0'
+
+[dependencies.serde]
+version = '1.0'
+features = ['derive']
+
+[dependencies.rocket]
+version = '0.5.0-rc.1'
+features = ['json']
+
+[dependencies.rocket_contrib]
+default-features = false
+features = [
+    'json',
+    'handlebars_templates',
+]
+version = '0.4.8'
