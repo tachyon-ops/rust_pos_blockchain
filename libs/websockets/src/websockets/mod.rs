@@ -14,17 +14,24 @@ pub struct Client {
 type Clients = Arc<Mutex<HashMap<String, Client>>>;
 type Result<T> = std::result::Result<T, Rejection>;
 
-pub async fn run_websockets() {
+pub async fn run(port: u16) {
+    let path = "ws";
+    println!("==================================");
+    println!("==>> Welcome to WS server 0.0 <<==");
+    println!("==================================");
+    println!("\nStarting WS server");
+    println!("Server on ws://127.0.0.1:{}/{}", port, path);
+
     let clients: Clients = Arc::new(Mutex::new(HashMap::new()));
 
     println!("Configuring websocket route");
-    let ws_route = warp::path("ws")
+    let ws_route = warp::path(path)
         .and(warp::ws())
         .and(with_clients(clients.clone()))
         .and_then(handlers::ws_handler);
 
     let routes = ws_route.with(warp::cors().allow_any_origin());
-    warp::serve(routes).run(([127, 0, 0, 1], 8000)).await;
+    warp::serve(routes).run(([127, 0, 0, 1], port)).await;
 }
 
 fn with_clients(clients: Clients) -> impl Filter<Extract = (Clients,), Error = Infallible> + Clone {

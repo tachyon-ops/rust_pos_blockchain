@@ -1,12 +1,6 @@
 mod websockets;
 
-pub async fn run_websockets() {
-    println!("==================================");
-    println!("==>> Welcome to WS server 0.0 <<==");
-    println!("==================================");
-    println!("\nStarting WS server");
-    websockets::run_websockets().await;
-}
+pub use websockets::run;
 
 #[cfg(test)]
 mod tests {
