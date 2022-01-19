@@ -8,9 +8,10 @@ use rocket::{Build, Rocket};
 
 /// Routing
 fn rocket(port: u16) -> Rocket<Build> {
+    // Check https://rocket.rs/v0.5-rc/guide/configuration/#custom-providers
     let figment = rocket::Config::figment()
         .merge(("port", port))
-        .merge(("limits", Limits::new().limit("json", 2.mebibytes())));
+        .merge(("limits", Limits::new().limit("json", 256.mebibytes())));
 
     rocket::custom(figment)
         .mount("/", server::get_index_routes())

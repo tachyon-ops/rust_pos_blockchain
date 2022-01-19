@@ -2,8 +2,6 @@
 name = 'rust_bc_pos'
 version = '0.1.0'
 edition = '2021'
-[global.limits]
-json = 5242880
 
 [dependencies]
 tokio = '1.15.0'
