@@ -1,5 +1,5 @@
 use std::{collections::HashMap, convert::Infallible, sync::Arc};
-use tokio::sync::{mpsc, Mutex};
+use tokio::sync::{mpsc, RwLock};
 use warp::{ws::Message, Filter, Rejection};
 
 pub mod handlers;
@@ -11,7 +11,7 @@ pub struct Client {
     pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, warp::Error>>>,
 }
 
-type Clients = Arc<Mutex<HashMap<String, Client>>>;
+type Clients = Arc<RwLock<HashMap<String, Client>>>;
 type Result<T> = std::result::Result<T, Rejection>;
 
 pub async fn run(port: u16) {
@@ -22,7 +22,7 @@ pub async fn run(port: u16) {
     println!("\nStarting WS server");
     println!("Server on ws://127.0.0.1:{}/{}", port, path);
 
-    let clients: Clients = Arc::new(Mutex::new(HashMap::new()));
+    let clients: Clients = Arc::new(RwLock::new(HashMap::new()));
 
     println!("Configuring websocket route");
     let ws_route = warp::path(path)

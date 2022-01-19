@@ -22,7 +22,10 @@ pub async fn client_connection(ws: WebSocket, clients: Clients) {
         sender: Some(client_sender),
     };
     println!("{} client added", new_client.client_id);
-    clients.lock().await.insert(uuid.clone(), new_client);
+    clients.write().await.insert(uuid.clone(), new_client);
+
+    send_welcome_message(&clients, &uuid.clone()).await;
+
     while let Some(result) = client_ws_rcv.next().await {
         let msg = match result {
             Ok(msg) => msg,
@@ -33,8 +36,23 @@ pub async fn client_connection(ws: WebSocket, clients: Clients) {
         };
         client_msg(&uuid, msg, &clients).await;
     }
-    clients.lock().await.remove(&uuid);
+    clients.write().await.remove(&uuid);
     println!("{} disconnected", uuid);
+}
+
+async fn send_welcome_message(clients: &Clients, uuid: &str) {
+    let this_clients = clients.read().await;
+    let some_client = this_clients
+        .iter()
+        .find(|(_, client)| client.client_id == uuid);
+    if let Some((_, client)) = some_client {
+        if let Some(sender) = &client.sender {
+            let _ = sender.send(Ok(Message::text(format!(
+                "You are client ID: {}",
+                uuid.clone()
+            ))));
+        }
+    }
 }
 
 async fn client_msg(client_id: &str, msg: Message, clients: &Clients) {
@@ -44,8 +62,7 @@ async fn client_msg(client_id: &str, msg: Message, clients: &Clients) {
         Err(_) => return,
     };
     if message == "ping" || message == "ping\n" {
-        let locked = clients.lock().await;
-        match locked.get(client_id) {
+        match clients.read().await.get(client_id) {
             Some(v) => {
                 if let Some(sender) = &v.sender {
                     println!("sending pong");
@@ -55,5 +72,18 @@ async fn client_msg(client_id: &str, msg: Message, clients: &Clients) {
             None => return,
         }
         return;
-    };
+    } else {
+        // send to all others
+        clients
+            .read()
+            .await
+            .iter()
+            .filter(|(_, client)| client.client_id != client_id)
+            .for_each(|(client_id, client)| {
+                if let Some(sender) = &client.sender {
+                    println!("Sending msg [{}] to client ID {}", message, client_id);
+                    let _ = sender.send(Ok(Message::text(message.clone())));
+                }
+            })
+    }
 }
