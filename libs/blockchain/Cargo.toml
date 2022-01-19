@@ -1,0 +1,12 @@
+[package]
+name = 'blockchain'
+version = '0.1.0'
+edition = '2021'
+
+[dependencies]
+chrono = '0.4.19'
+rust-crypto = '0.2.36'
+
+[dependencies.serde]
+version = '1.0'
+features = ['derive']

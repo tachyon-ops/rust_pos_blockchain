@@ -3,8 +3,8 @@ use lazy_static::lazy_static;
 use rocket::http::Status;
 use serde_json::json;
 
-use crate::blockchain::{BlockChain, BlockData};
 use crate::server::api::ApiResponse;
+use ::blockchain::{BlockChain, BlockData};
 
 pub mod api;
 

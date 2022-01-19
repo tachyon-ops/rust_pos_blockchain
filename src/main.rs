@@ -1,18 +1,9 @@
-#[macro_use]
-extern crate rocket;
+// #[macro_use]
+// extern crate rocket;
 
-mod blockchain;
-mod server;
-
-#[get("/")]
-fn index() -> String {
-    format!("Hello World!")
-}
-
-#[launch]
-fn run() -> _ {
+fn main() {
     println!("Running server");
-    rocket::build()
-        .mount("/", routes![index])
-        .mount("/bc", server::get_routes())
+
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(server::run_server());
 }
