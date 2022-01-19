@@ -4,22 +4,9 @@ use rocket::http::Status;
 use serde_json::json;
 
 use crate::server::api::ApiResponse;
-use ::blockchain::{BlockChain, BlockData};
+use pos_blockchain::{BlockChain, BlockData};
 
 pub mod api;
-
-fn _test() {
-    let mut bc = BlockChain::new();
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    bc.add_block(BlockData::new());
-    print!("{}", bc);
-    BlockChain::is_valid_chain(bc.chain);
-}
 
 use std::sync::Mutex;
 
@@ -47,13 +34,6 @@ fn mine(data: rocket::serde::json::Json<BlockData>) -> ApiResponse {
     println!("Block data: {:?}", data);
     let block = BC.lock().unwrap().add_block(BlockData::new());
     println!("New block added: {}", block);
-    // ApiResponse {
-    //     json: json!({ "block": new_block }).into(),
-    //     status: Status::Ok,
-    // }
-    // const block = blockchain.addBlock(req.body.data);
-    // console.log(`New block added: ${block.toString()}`);
-    // res.redirect('/blocks');
     let json = json!(*BC.lock().unwrap().chain).into();
     ApiResponse {
         json,
@@ -61,28 +41,16 @@ fn mine(data: rocket::serde::json::Json<BlockData>) -> ApiResponse {
     }
 }
 
-// #[post("/mine", data = "<block>")]
-// fn mine(block: rocket::serde::json::Json<Block>) -> ApiResponse {
-//     let new_block: Block = Block {
-//         timestamp: block.timestamp,
-//         last_hash: block.last_hash.clone(),
-//         hash: block.hash.clone(),
-//         data: block.data.clone(),
-//         validator: block.validator.clone(),
-//         signature: block.signature.clone(),
-//     };
+#[get("/")]
+fn index() -> String {
+    format!("Hello World!")
+}
 
-//     ApiResponse {
-//         json: json!({ "block": new_block }).into(),
-//         status: Status::Ok,
-//     }
-//     // const block = blockchain.addBlock(req.body.data);
-//     // console.log(`New block added: ${block.toString()}`);
+pub fn get_index_routes() -> Vec<rocket::Route> {
+    routes![index]
+}
 
-//     // res.redirect('/blocks');
-// }
-
-pub fn get_routes() -> Vec<rocket::Route> {
+pub fn get_blockchain_routes() -> Vec<rocket::Route> {
     routes![
         // Heroes
         blocks, blockchain, mine

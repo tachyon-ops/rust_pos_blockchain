@@ -27,5 +27,5 @@ features = [
 ]
 version = '0.4.8'
 
-[dependencies.blockchain]
-path = '../blockchain'
+[dependencies.pos_blockchain]
+path = '../pos_blockchain'

@@ -10,3 +10,7 @@ tokio = '1.15.0'
 
 [dependencies.server]
 path = './libs/server'
+
+
+[dependencies.websockets]
+path = './libs/websockets'
