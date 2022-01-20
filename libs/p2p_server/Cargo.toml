@@ -1,0 +1,25 @@
+[package]
+name = 'p2p_server'
+version = '0.1.0'
+edition = '2021'
+
+[dependencies]
+lazy_static = '1.4.0'
+env_logger = '0.9'
+log = '0.4.1'
+libp2p = '0.41.1'
+futures = '0.3.19'
+
+[dependencies.async-std]
+version = '1.10.0'
+features = ['attributes']
+
+[dependencies.pos_blockchain]
+path = '../pos_blockchain'
+
+[dependencies.uuid]
+version = '0.8.2'
+features = [
+    'serde',
+    'v4',
+]

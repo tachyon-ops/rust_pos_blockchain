@@ -11,6 +11,10 @@ struct Args {
     /// Server/Websocket PORT
     #[clap(short, long, default_value_t = 8000)]
     port: u16,
+
+    /// Comma separated list of Peers
+    #[clap(long, default_value = "")]
+    peers: String,
 }
 
 fn main() {
@@ -18,9 +22,19 @@ fn main() {
 
     let rt = tokio::runtime::Runtime::new().unwrap();
 
-    if args.server {
-        rt.block_on(server::run(args.port));
+    let peers_string = args.peers;
+    let peers: Vec<&str>;
+    if peers_string.len() > 0 {
+        peers = peers_string.split(",").collect();
     } else {
-        rt.block_on(websockets::run(args.port));
+        peers = vec![];
     }
+    println!("Peers: {:?}", peers);
+
+    // if args.server {
+    //     rt.block_on(server::run(args.port));
+    // } else {
+    //     rt.block_on(websockets::run(args.port, peers));
+    // }
+    rt.block_on(p2p_server::run(args.port, peers));
 }

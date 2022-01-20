@@ -11,5 +11,5 @@ clap = { version = "3.0.10", features = ["derive"] }
 path = './libs/server'
 
 
-[dependencies.websockets]
-path = './libs/websockets'
+[dependencies.p2p_server]
+path = './libs/p2p_server'
